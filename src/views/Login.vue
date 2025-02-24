@@ -1,11 +1,14 @@
 <template>
+  <!-- 로그인 페이지 전체 컨테이너 -->
   <div class="login-container">
     <div class="login-box">
       <h2>로그인</h2>
+
+      <!-- 로그인 폼 -->
       <form @submit.prevent="login">
         <div class="form-group">
-          <label>아이디:</label>
-          <input type="text" v-model="form.name" required />
+          <label>이메일:</label>
+          <input type="email" v-model="form.email" required />
         </div>
 
         <div class="form-group">
@@ -16,8 +19,10 @@
         <button type="submit" class="login-btn">로그인</button>
       </form>
 
+      <!-- 회원가입, 아이디 찾기, 비밀번호 찾기 링크 -->
       <div class="links">
         <p>계정이 없으신가요? <router-link to="/register">회원가입</router-link></p>
+        <p><router-link to="/find-id">아이디 찾기</router-link></p>
         <p><router-link to="/find-password">비밀번호 찾기</router-link></p>
       </div>
     </div>
@@ -28,29 +33,35 @@
 export default {
   data() {
     return {
+      // 입력 폼 데이터 (이메일 & 비밀번호)
       form: {
-        name: "",
+        email: "",
         password: "",
       },
     };
   },
   methods: {
+    // 로그인 기능
     login() {
-      const userData = JSON.parse(localStorage.getItem("user_" + this.form.name));
+      // localStorage에서 해당 이메일로 저장된 사용자 데이터 가져오기
+      const storedUser = JSON.parse(localStorage.getItem("user_" + this.form.email));
 
-      if (!userData) {
-        alert("등록된 사용자가 아닙니다.");
+      // 사용자가 존재하지 않는 경우
+      if (!storedUser) {
+        alert("등록되지 않은 이메일입니다.");
         return;
       }
 
-      if (userData.password !== this.form.password) {
+      // 입력한 비밀번호가 저장된 비밀번호와 일치하지 않는 경우
+      if (storedUser.password !== this.form.password) {
         alert("비밀번호가 틀렸습니다.");
         return;
       }
 
-      localStorage.setItem("loggedInUser", this.form.name);
+      // 로그인 성공 시 localStorage에 로그인 상태 저장
+      localStorage.setItem("loggedInUser", this.form.email);
       alert("로그인 성공!");
-      this.$router.push("/"); // 로그인 성공 후 메인 페이지로 이동
+      this.$router.push("/"); // 로그인 성공 후 메인 페이지('/')로 이동
     },
   },
 };
@@ -62,7 +73,7 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh; /* 전체 화면 높이 */
+  height: 100vh;
   background-color: #f4f4f4;
 }
 
@@ -76,7 +87,7 @@ export default {
   text-align: center;
 }
 
-/* 제목 */
+/* 제목 스타일 */
 h2 {
   margin-bottom: 20px;
   font-size: 24px;

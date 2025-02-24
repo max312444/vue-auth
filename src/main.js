@@ -1,32 +1,13 @@
+// Vue3의 'createApp' 함수를 가져옴 (애플리케이션 인스턴스를 생성하기 위해 필요)
 import { createApp } from "vue";
+// 애플리케이션의 최상위 컴포넌트("App.vue")를 가져옴
 import App from "./App.vue";
+// Vue Router 성정 파일('router/index.js')을 가져옴 (라우팅 기능을 사용하기 위해 필요)
 import router from "./router";
-
-const initializeMockData = () => {
-  const mockUsers = [
-    { username: "홍길동", phone: "01012345678", password: "5678" },
-    { username: "김철수", phone: "01087654321", password: "4321" },
-    { username: "이영희", phone: "01055559999", password: "9999" },
-  ];
-
-  let users = JSON.parse(localStorage.getItem("users")) || [];
-
-  // 기존 유저 데이터에 중복되지 않게 기본 유저 추가
-  mockUsers.forEach(mockUser => {
-    if (!users.some(user => user.username === mockUser.username)) {
-      users.push(mockUser);
-    }
-  });
-
-  // 수정된 users 데이터를 다시 저장
-  localStorage.setItem("users", JSON.stringify(users));
-  console.log("✅ Mock Data가 강제로 추가되었습니다!", users);
-};
-
-
-// Mock Data 초기화 실행
-initializeMockData();
                        
+//  Vue 애플리케이션 인스턴스 생성
 const app = createApp(App);
+// 생성한 Vue 애플리케이션 'router' (Vue Router) 추가 (애플리케이션에서 라우팅을 사용할 수 있도록 설정)
 app.use(router);
+// '#app" 요소에 Vue 애플리케이션을 마운트하여 랜더링 시작
 app.mount("#app");
