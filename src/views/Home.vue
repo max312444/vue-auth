@@ -4,26 +4,52 @@
     <div class="left-section">
       <div class="welcome-box">
         <h3>환영합니다, {{ user.name }} 님!</h3>
-        <!-- 로그아웃 버튼 -->
         <button @click="logout">로그아웃</button>
-        <!-- 회원탈퇴 버튼 -->
         <button @click="deleteAccount" class="delete-btn">회원 탈퇴</button>
       </div>
-      <!-- 회원 정보 -->
+
+      <!-- 회원 정보 (수정 가능) -->
       <div class="user-info">
         <h3>회원 정보</h3>
-        <p><strong>이름:</strong> {{ user.name }}</p>
-        <p><strong>이메일:</strong> {{ user.email }}</p>
-        <p><stong>전화번호:</stong> {{ user.phone }}</p>
-        <p><strong>생년월일:</strong> {{ user.birthdate }}</p>
-        <p><strong>성별:</strong> {{ user.gender }}</p>
-        <p><strong>키:</strong> {{ user.height }} cm</p>
+
+        <div v-if="!isEditing">
+          <p><strong>이름:</strong> {{ user.name }}</p>
+          <p><strong>이메일:</strong> {{ user.email }}</p>
+          <p><strong>전화번호:</strong> {{ user.phone }}</p>
+          <p><strong>생년월일:</strong> {{ user.birthdate }}</p>
+          <p><strong>성별:</strong> {{ user.gender }}</p>
+          <p><strong>키:</strong> {{ user.height }} cm</p>
+          <button @click="enableEditing" class="edit-btn">회원 정보 수정</button>
+        </div>
+
+        <!-- 수정 폼 -->
+        <div v-else>
+          <label>이름:</label>
+          <input type="text" v-model="editUser.name" />
+
+          <label>전화번호:</label>
+          <input type="text" v-model="editUser.phone" />
+
+          <label>생년월일:</label>
+          <input type="date" v-model="editUser.birthdate" />
+
+          <label>성별:</label>
+          <select v-model="editUser.gender">
+            <option value="남성">남성</option>
+            <option value="여성">여성</option>
+          </select>
+
+          <label>키 (cm):</label>
+          <input type="number" v-model="editUser.height" />
+
+          <button @click="saveChanges" class="save-btn">완료</button>
+          <button @click="cancelEditing" class="cancel-btn">취소</button>
+        </div>
       </div>
     </div>
 
     <!-- 가운데 섹션 (회원 사진 & 선택한 사진) -->
     <div class="center-section">
-      <!-- 회원 프로필 사진 (클릭하면 확대) -->
       <div class="photo-box" @click="openModal(user.photo)">
         <h3>초기 회원 사진</h3>
         <div v-if="user.photo">
@@ -32,7 +58,6 @@
         <p v-else>🚧 아직 사진이 없습니다.</p>
       </div>
 
-      <!-- 선택한 사진 (클릭하면 확대) -->
       <div class="selected-photo-box" @click="openModal(selectedPhoto)">
         <h3>선택한 사진</h3>
         <div v-if="selectedPhoto">
@@ -49,9 +74,7 @@
         <p>📷 클릭하면 사진이 가운데 표시됩니다.</p>
         <ul>
           <li v-for="(photo, index) in photoList" :key="index">
-            <!-- 클릭하면 선택한 사진이 가운데 표시됨 -->
             <span @click="selectPhoto(photo.url)" class="photo-item">{{ photo.date }} - {{ photo.name }}</span>
-            <!-- 사진 삭제 버튼 -->
             <button @click="deletePhoto(index)" class="delete-photo-btn">삭제</button>
           </li>
         </ul>
@@ -81,92 +104,102 @@ export default {
       user: {
         name: "",
         email: "",
+        phone: "",
         birthdate: "",
         gender: "",
         height: "",
-        photo: "", // 프로필 사진
+        photo: "",
       },
-      photoList: JSON.parse(localStorage.getItem("photoList")) || [],
-      selectedPhoto: null, // 선택한 사진
-      isModalOpen: false, // 모달 열림 상태
-      modalImage: "", // 모달에 표시할 이미지
+      editUser: {}, // 수정할 데이터를 저장할 객체
+      isEditing: false, // 수정 모드 활성화 여부
+      photoList: [],
+      selectedPhoto: null,
+      isModalOpen: false,
+      modalImage: "",
     };
   },
   created() {
-    // 로그인된 사용자 정보를 불러옴
     const loggedInUser = localStorage.getItem("loggedInUser");
     if (!loggedInUser) {
       alert("로그인이 필요합니다.");
-      this.$router.push("/login"); // 로그인 페이지로 이동
+      this.$router.push("/login");
     } else {
-      // 로컬스토리지에서 사용자 정보 가져오기
       const userData = JSON.parse(localStorage.getItem("user_" + loggedInUser));
       if (userData) {
         this.user = userData;
-        // 저장된 프로필 사진 불러오기
-        this.user.photo = localStorage.getItem("profilePhoto_" + loggedInUser) || ""; // 프로필 사진 불러오기
+        this.user.photo = localStorage.getItem("profilePhoto_" + loggedInUser) || "";
+        this.photoList = JSON.parse(localStorage.getItem(`photoList_${this.user.email}`)) || [];
       }
     }
   },
   methods: {
-    // 로그아웃 기능
-    logout() {
-      localStorage.removeItem("loggedInUser"); // 로그인 정보 삭제
-      alert("로그아웃되었습니다.");
-      this.$router.push("/login"); // 로그인 페이지로 이동
+    enableEditing() {
+      this.editUser = { ...this.user };
+      this.isEditing = true;
     },
 
-    // 회원 탈퇴 기능
+    saveChanges() {
+      this.user = { ...this.editUser };
+      localStorage.setItem("user_" + this.user.email, JSON.stringify(this.user));
+      alert("회원 정보가 수정되었습니다.");
+      this.isEditing = false;
+    },
+
+    cancelEditing() {
+      this.isEditing = false;
+    },
+
+    logout() {
+      localStorage.removeItem("loggedInUser");
+      alert("로그아웃되었습니다.");
+      this.$router.push("/login");
+    },
+
     deleteAccount() {
       if (confirm("정말 회원 탈퇴하시겠습니까?")) {
-        localStorage.removeItem("user_" + this.user.email); // 사용자 데이터 삭제
-        localStorage.removeItem("profilePhoto_" + this.user.email); // 프로필 사진 삭제
-        localStorage.removeItem("loggedInUser"); // 로그인 정보 삭제
-        localStorage.removeItem("photoList"); // 사진 목록 삭제
+        localStorage.removeItem("user_" + this.user.email);
+        localStorage.removeItem("profilePhoto_" + this.user.email);
+        localStorage.removeItem(`photoList_${this.user.email}`);
+        localStorage.removeItem("loggedInUser");
         alert("회원 탈퇴가 완료되었습니다.");
-        this.$router.push("/login"); // 로그인 페이지로 이동
+        this.$router.push("/login");
       }
     },
 
-    // 선택한 사진 변경
     selectPhoto(photoUrl) {
       this.selectedPhoto = photoUrl;
     },
 
-    // 사진 삭제 기능
     deletePhoto(index) {
       if (confirm("이 사진을 삭제하시겠습니까?")) {
-        this.photoList.splice(index, 1); // 배열에서 삭제
-        localStorage.setItem("photoList", JSON.stringify(this.photoList)); // 로컬스토리지 업데이트
+        this.photoList.splice(index, 1);
+        localStorage.setItem(`photoList_${this.user.email}`, JSON.stringify(this.photoList));
         alert("사진이 삭제되었습니다.");
       }
     },
 
-    // 사진 업로드 기능
     uploadPhoto(event) {
-      const file = event.target.files[0]; // 선택한 파일 가져오기
+      const file = event.target.files[0];
       if (file) {
         const reader = new FileReader();
-        reader.readAsDataURL(file); // 파일을 Base64로 변환
+        reader.readAsDataURL(file);
         reader.onload = () => {
           const newPhoto = {
-            date: new Date().toISOString().split("T")[0], // 업로드 날짜 저장
-            name: file.name, // 파일 이름 저장
-            url: reader.result, // Base64로 변환된 이미지 저장
+            date: new Date().toISOString().split("T")[0],
+            name: file.name,
+            url: reader.result,
           };
-          this.photoList.push(newPhoto); // 사진 목록에 추가
-          localStorage.setItem("photoList", JSON.stringify(this.photoList)); // 로컬스토리지 업데이트
+          this.photoList.push(newPhoto);
+          localStorage.setItem(`photoList_${this.user.email}`, JSON.stringify(this.photoList));
           alert("사진이 추가되었습니다.");
         };
       }
     },
 
-    // 파일 입력 트리거 (버튼 클릭 시 파일 선택 창 열기)
     triggerFileInput() {
       document.querySelector("input[type='file']").click();
     },
 
-    // 모달 열기(사진 확대 보기)
     openModal(imageUrl) {
       if (imageUrl) {
         this.modalImage = imageUrl;
@@ -174,7 +207,6 @@ export default {
       }
     },
 
-    // 모달 닫기기
     closeModal() {
       this.isModalOpen = false;
       this.modalImage = "";
