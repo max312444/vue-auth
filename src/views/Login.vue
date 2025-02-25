@@ -61,7 +61,7 @@ export default {
       // 로그인 성공 시 localStorage에 로그인 상태 저장
       localStorage.setItem("loggedInUser", this.form.email);
       alert("로그인 성공!");
-      this.$router.push("/home"); // 로그인 성공 후 메인 페이지('/home')로 이동
+      this.$router.push("/home"); // 로그인 성공 후 메인 페이지('/')로 이동
     },
   },
 };
