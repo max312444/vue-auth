@@ -10,8 +10,8 @@ import FindID from '../views/FindID.vue';
 import FindPassword from '../views/FindPassword.vue';
 
 const routes = [
-  { path: '/', component: Home },
-  { path: '/login', component: Login },
+  { path: '/home', component: Home },
+  { path: '/', component: Login },
   { path: '/register', component: Register },
   { path: '/profile', component: Profile },
   { path: '/find-id', component: FindID },

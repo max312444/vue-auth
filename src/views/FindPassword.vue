@@ -32,7 +32,7 @@
 
       <!-- 로그인 페이지로 돌아가는 링크 -->
       <div class="links">
-        <p><router-link to="/login">로그인으로 돌아가기</router-link></p>
+        <p><router-link to="/">로그인으로 돌아가기</router-link></p>
       </div>
     </div>
   </div>
@@ -76,7 +76,7 @@ export default {
       this.errorMessage = ""; // 오류 메시지 초기화
     },
     goToLogin() {
-      this.$router.push("/login"); // "/login" 페이지로 이동
+      this.$router.push("/"); // "/login" 페이지로 이동
     },
   },
 };

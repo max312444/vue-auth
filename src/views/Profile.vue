@@ -18,7 +18,7 @@
     <!-- 로그인 상태가 아닐 경우 로그인 링크 표시 -->
     <div v-else>
       <p>로그인 상태가 아닙니다.</p>
-      <router-link to="/login">로그인하기</router-link>
+      <router-link to="/">로그인하기</router-link>
     </div>
   </div>
 </template>

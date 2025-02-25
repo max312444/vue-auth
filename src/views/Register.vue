@@ -182,13 +182,13 @@ export default {
       localStorage.setItem("profilePhoto_" + this.form.email, this.form.photo);
 
       alert("회원가입 완료!");
-      this.$router.push("/login"); // 로그인 페이지로 이동
+      this.$router.push("/"); // 로그인 페이지로 이동
     },
 
     // 취소 버튼 클릭 시 로그인 페이지로 이동
     cancelRegister() {
       if (confirm("회원가입을 취소하시겠습니까?")) {
-        this.$router.push("/login"); 
+        this.$router.push("/"); 
       }
     }
   }

@@ -26,18 +26,22 @@
         <div v-else>
           <label>이름:</label>
           <input type="text" v-model="editUser.name" />
+          <br />
 
           <label>전화번호:</label>
           <input type="text" v-model="editUser.phone" />
+          <br />
 
           <label>생년월일:</label>
           <input type="date" v-model="editUser.birthdate" />
+          <br />
 
           <label>성별:</label>
           <select v-model="editUser.gender">
             <option value="남성">남성</option>
             <option value="여성">여성</option>
           </select>
+          <br />
 
           <label>키 (cm):</label>
           <input type="number" v-model="editUser.height" />
@@ -122,7 +126,7 @@ export default {
     const loggedInUser = localStorage.getItem("loggedInUser");
     if (!loggedInUser) {
       alert("로그인이 필요합니다.");
-      this.$router.push("/login");
+      this.$router.push("/");
     } else {
       const userData = JSON.parse(localStorage.getItem("user_" + loggedInUser));
       if (userData) {
@@ -152,7 +156,7 @@ export default {
     logout() {
       localStorage.removeItem("loggedInUser");
       alert("로그아웃되었습니다.");
-      this.$router.push("/login");
+      this.$router.push("/");
     },
 
     deleteAccount() {
@@ -162,7 +166,7 @@ export default {
         localStorage.removeItem(`photoList_${this.user.email}`);
         localStorage.removeItem("loggedInUser");
         alert("회원 탈퇴가 완료되었습니다.");
-        this.$router.push("/login");
+        this.$router.push("/");
       }
     },
 
@@ -365,4 +369,52 @@ input[type="file"] {
   cursor: pointer;
   border-radius: 5px;
 }
+
+/* 회원정보 수정 폼 스타일 */
+.user-info input, 
+.user-info select {
+  width: 100%;
+  padding: 8px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-bottom: 12px; /* 입력 필드 간 여백 추가 */
+}
+
+/* 수정 버튼 스타일 */
+.edit-btn, .save-btn, .cancel-btn {
+  background-color: #007bff;
+  color: white;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  font-size: 14px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.save-btn {
+  background-color: #28a745; /* 초록색 (저장 버튼) */
+}
+
+.cancel-btn {
+  background-color: #dc3545; /* 빨간색 (취소 버튼) */
+}
+
+.edit-btn:hover, .save-btn:hover, .cancel-btn:hover {
+  opacity: 0.8;
+}
+
+/* 회원정보 수정 칸 간격 조절 */
+.user-info label {
+  font-weight: bold;
+  display: block;
+  margin-bottom: 5px;
+}
+
+/* 버튼 간격 */
+.save-btn, .cancel-btn {
+  margin-right: 5px;
+}
+
 </style>
