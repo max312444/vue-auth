@@ -40,6 +40,7 @@
           <select v-model="editUser.gender">
             <option value="남성">남성</option>
             <option value="여성">여성</option>
+            <option value="기타">기타</option>
           </select>
           <br />
 
@@ -59,7 +60,6 @@
         <div v-if="user.photo">
           <img :src="user.photo" alt="회원 사진" class="profile-photo" />
         </div>
-        <p v-else>🚧 아직 사진이 없습니다.</p>
       </div>
 
       <div class="selected-photo-box" @click="openModal(selectedPhoto)">
@@ -75,7 +75,7 @@
     <div class="right-section">
       <div class="photo-list">
         <h3>사진 목록</h3>
-        <p>📷 클릭하면 사진이 가운데 표시됩니다.</p>
+        <p>클릭하면 사진이 가운데 표시됩니다.</p>
         <ul>
           <li v-for="(photo, index) in photoList" :key="index">
             <span @click="selectPhoto(photo.url)" class="photo-item">{{ photo.date }} - {{ photo.name }}</span>
@@ -142,6 +142,7 @@ export default {
       this.isEditing = true;
     },
 
+    // 회원 정보 수정 함수
     saveChanges() {
       this.user = { ...this.editUser };
       localStorage.setItem("user_" + this.user.email, JSON.stringify(this.user));
@@ -149,16 +150,19 @@ export default {
       this.isEditing = false;
     },
 
+    // 수정 취소 함수
     cancelEditing() {
       this.isEditing = false;
     },
 
+    // 로그아웃 함수
     logout() {
       localStorage.removeItem("loggedInUser");
       alert("로그아웃되었습니다.");
       this.$router.push("/");
     },
 
+    // 회원 탈퇴 함수
     deleteAccount() {
       if (confirm("정말 회원 탈퇴하시겠습니까?")) {
         localStorage.removeItem("user_" + this.user.email);
@@ -170,10 +174,12 @@ export default {
       }
     },
 
+    // 사진 선택 함수
     selectPhoto(photoUrl) {
       this.selectedPhoto = photoUrl;
     },
 
+    // 사진 삭제 함수
     deletePhoto(index) {
       if (confirm("이 사진을 삭제하시겠습니까?")) {
         this.photoList.splice(index, 1);
@@ -182,6 +188,7 @@ export default {
       }
     },
 
+    // 사진 업로드 함수
     uploadPhoto(event) {
       const file = event.target.files[0];
       if (file) {
@@ -199,11 +206,13 @@ export default {
         };
       }
     },
-
+    
+    // HTML 요소를 프로그래밍적으로 클릭하는 함수
     triggerFileInput() {
       document.querySelector("input[type='file']").click();
     },
 
+    // 모달 여는 함수
     openModal(imageUrl) {
       if (imageUrl) {
         this.modalImage = imageUrl;
@@ -211,6 +220,7 @@ export default {
       }
     },
 
+    // 모달 닫는 함수
     closeModal() {
       this.isModalOpen = false;
       this.modalImage = "";
