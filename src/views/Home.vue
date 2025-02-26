@@ -340,7 +340,7 @@ input[type="file"] {
   display: none;
 }
 
-/* ✅ 모달(팝업) 스타일 추가 */
+/* 모달(팝업) 스타일 추가 */
 .modal-overlay {
   position: fixed;
   top: 0;

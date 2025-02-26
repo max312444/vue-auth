@@ -71,12 +71,12 @@ export default {
         return;
       }
 
-      // ✅ 비밀번호 찾기 성공 시 팝업에 표시
+      // 비밀번호 찾기 성공 시 팝업에 표시
       this.foundPassword = userData.password; // 찾은 비밀번호 변수에 저장
       this.errorMessage = ""; // 오류 메시지 초기화
     },
     goToLogin() {
-      this.$router.push("/"); // "/login" 페이지로 이동
+      this.$router.push("/"); // "/" 페이지로 이동
     },
   },
 };
